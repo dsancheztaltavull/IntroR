@@ -60,7 +60,7 @@ temperature <- c(10,9,9,8,9,9,9.5,10,9.5,9,12,11.5,12,13,13,13.5,14,14,13,12,11,
 
 
 
-#Plot the cos function
+#Plot the cos function from 0 to 6.28
 
 
 #plot the sqrt function from 0 to 10
