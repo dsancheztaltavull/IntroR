@@ -7,7 +7,7 @@
 #Substract 3 to 4
 4-3
 
-#Division
+#Divide 47 by 17
 47/17
 
 
