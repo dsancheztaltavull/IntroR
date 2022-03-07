@@ -1,11 +1,11 @@
-#read ?vector and ?c
+#read the help of the functions vector and c
 
 ?c
 ?vector
 
-#Combine 1, 34, 194, 7
+#Combine 18, 26, 29, 65
 
-a <- c(1, 34, 194, 7)
+a <- c(18, 26, 29, 65)
 
 a
 
@@ -24,12 +24,12 @@ a[c(2,3)]
 
 a[2]-a[4]
 
-#How many are above 100?
-a > 100
+#How many are above 28?
+a > 28
 
 #Create vector of characters
 
-cvec <- c("Ottawa", "Madrid", "London", "Tokio")
+cvec <- c("Menorca", "Barcelona", "Ottawa", "Bern")
 
 #Positions
 cvec[1]
@@ -47,15 +47,15 @@ names(a)
 a
 
 
-a["Tokio"]
+a["Menorca"]
 
 
-a["Madrid"]-a["Ottawa"]
+a["Bern"]-a["Ottawa"]
 #Did you see something strange?
 
 max(a)
 
-which(a==194)
+which(a==29)
 
 which(a==max(a))
 
@@ -82,7 +82,7 @@ bdayW["Year"] < bdayS["Year"]
 
 bdayW["Year"] > bdayS["Year"]
 
-#Let's illustrate this with an example
+#An example to illustrate this
 
 bdayA <- c(1,4,1984)
 names(bdayA) <- date
@@ -229,8 +229,10 @@ rep("gold", 7)
 c(rep("gold",5), rep(c("green", "blue"),5))
 
 
-
 ?vector
+
+
+#I promise this will be useful in the future:
 
 #create a numeric vector of length 10
 vector(mode="numeric", length=10)
@@ -240,3 +242,4 @@ vector(mode="character", length=6)
 
 #create a logical vector of length 10
 vector(mode="logical", length=12)
+
