@@ -1,3 +1,7 @@
+#Load libaries:
+library(ggplot2)
+
+
 list.files()
 
 #Open the RNA-seq data from Lecture 7
@@ -10,37 +14,13 @@ str(data)
 
 #Read per million normalization
 rpm <- 1000000*t(t(data)/colSums(data))
-colSums(rpm)
-
-#log normalization
-
+#log transformation
 rpm <- log(1+rpm)
-
 #Principal Component Analysis
 pc <- prcomp(t(rpm))
-
-
-
-#Inspect it
-summary(pc)
-names(pc)
-
-
-#Inspect the variance explained by each component
-percent_var <- pc$sdev^2/sum(pc$sdev^2)
-barplot(percent_var, xlab="Principle component", ylab="% of variance")
-
-cum_var <- cumsum(pc$sdev^2/sum(pc$sdev^2))
-barplot(cum_var, xlab="Principle component", ylab="Cumulative % of variance" )
-
-#PCA coordinates
-pc$x
-head(pc$x)
-
-library(ggplot2)
-
+#plot
 ggplot(aes(x=PC1, y=PC2), data=data.frame(pc$x))+
-  geom_point(size=4, alpha=0.5)+
+  geom_point(size=2, alpha=1)+
   theme_bw()
 
 
@@ -49,16 +29,16 @@ colnames(data)
 Condition <- c(0,0,2,2,4,4,6,6,7.5,7.5,8,8,8.5,8.5,10,10,10.5,10.5,11,11,11.5,11.5,12,12,14,14,16,16)
 #?ggplot
 ggplot(aes(x=PC1, y=PC2, color=Group), data=data.frame(pc$x, Group=Condition))+
-  geom_point(size=4, alpha=1)+ xlab(paste0("PC1: ",100*percent_var[1],"% variance")) +
-  ylab(paste0("PC2: ",100*percent_var[2],"% variance"))+theme_bw()+
+  geom_point(size=2, alpha=1)+ xlab(paste0("PC1")) +
+  ylab(paste0("PC2"))+theme_bw()+
   scale_color_gradient(low="black", high="red")
 
 #Plot a meaningful gene for this dataset
 HBB <- rpm["HBB",]
 
 ggplot(aes(x=PC1, y=PC2,  color=GeneExpression), data=data.frame(pc$x, GeneExpression=HBB))+
-  geom_point(size=4, alpha=1)+ xlab(paste0("PC1: ",100*percent_var[1],"% variance")) +
-  ylab(paste0("PC2: ",100*percent_var[2],"% variance"))+theme_bw()+
+  geom_point(size=2, alpha=1)+ xlab(paste0("PC1")) +
+  ylab(paste0("PC2"))+theme_bw()+
   scale_color_gradient(low="black", high="red")+ggtitle("HBB")
 
 
@@ -96,10 +76,9 @@ head(mygenes)
 
 ngene <- nrow(subrpm)
 
+#This can take a while
 pdf("AllGenes.pdf", height=9, width=9)
 par(mfrow=c(3,3))
-
-head(data.norm)
 
 for(i in 1:ngene) {
   plot(0,0,  xaxt = "n", type="n", xlim=c(0.5,2.5), ylim=c(0,ymax[i]), main=mygenes[i], xlab="Condition", ylab="Expression")
@@ -110,7 +89,6 @@ for(i in 1:ngene) {
 }
 dev.off()
 
-head(data.norm)
 
 
 
@@ -167,4 +145,3 @@ write.csv(dataout,file="results_Group3vsGroup2.csv",row.names=T,col.names=T,quot
 
 #Make a heatmap of the differentially expressed genes with heatmap.2
 library(gplots)
-
