@@ -9,44 +9,16 @@ str(data)
 
 
 #Read per million normalization
-
-colSums(data)
-
-
 rpm <- 1000000*t(t(data)/colSums(data))
-colSums(rpm)
-
-#log normalization
-
 rpm <- log(1+rpm)
-
-
-
 #Principal Component Analysis
 pc <- prcomp(t(rpm))
 
 
-
-#Inspect it
-summary(pc)
-names(pc)
-
-
-#Inspect the variance explained by each component
-percent_var <- pc$sdev^2/sum(pc$sdev^2)
-barplot(percent_var, xlab="Principle component", ylab="% of variance")
-
-cum_var <- cumsum(pc$sdev^2/sum(pc$sdev^2))
-barplot(cum_var, xlab="Principle component", ylab="Cumulative % of variance" )
-
-#PCA coordinates
-pc$x
-head(pc$x)
-
+#plot
 library(ggplot2)
-
 ggplot(aes(x=PC1, y=PC2), data=data.frame(pc$x))+
-  geom_point(size=4, alpha=0.5)+
+  geom_point(size=2)+
   theme_bw()
 
 
@@ -55,16 +27,14 @@ colnames(data)
 Condition <- c(0,0,2,2,4,4,6,6,7.5,7.5,8,8,8.5,8.5,10,10,10.5,10.5,11,11,11.5,11.5,12,12,14,14,16,16)
 #?ggplot
 ggplot(aes(x=PC1, y=PC2, color=Group), data=data.frame(pc$x, Group=Condition))+
-  geom_point(size=4, alpha=1)+ xlab(paste0("PC1: ",100*percent_var[1],"% variance")) +
-  ylab(paste0("PC2: ",100*percent_var[2],"% variance"))+theme_bw()+
+  geom_point(size=2)+theme_bw()+
   scale_color_gradient(low="black", high="red")
 
 #Plot a meaningful gene for this dataset
 HBB <- rpm["HBB",]
 
 ggplot(aes(x=PC1, y=PC2,  color=GeneExpression), data=data.frame(pc$x, GeneExpression=HBB))+
-  geom_point(size=4, alpha=1)+ xlab(paste0("PC1: ",100*percent_var[1],"% variance")) +
-  ylab(paste0("PC2: ",100*percent_var[2],"% variance"))+theme_bw()+
+  geom_point(size=2)+theme_bw()+
   scale_color_gradient(low="black", high="red")+ggtitle("HBB")
 
 
@@ -133,10 +103,10 @@ dev.off()
 
 #Differentially expressed genes
 
-if (!requireNamespace("BiocManager", quietly = TRUE))
-  install.packages("BiocManager")
+#if (!requireNamespace("BiocManager", quietly = TRUE))
+#  install.packages("BiocManager")
 
-BiocManager::install("DESeq2")
+#BiocManager::install("DESeq2")
 
 library("DESeq2")
 
@@ -181,12 +151,12 @@ write.csv(dataout,file="results_Group3vsGroup2.csv",row.names=T,col.names=T,quot
 
 
 
-#Make a volcano plot with the log2FC and the adjusted pvalue
+#Correct the following code to make a volcano plot with the log2FC and the adjusted pvalue
 
-ggplot(dataout, aes(x=log2FoldChange, y=-log10(pvalue)))+geom_point()
+ggplot(dataout, aes(x=log2FoldChange, y=-log10(padj)))+geom_point()
 
 
-ggplot(DE_list, aes(x=log2FoldChange, y=-log10(pvalue)))+geom_point()
+ggplot(DE_list, aes(x=log2FoldChange, y=-log10(padj)))+geom_point()
 
 ids <- is.na(DE_list$padj)
 
@@ -200,7 +170,7 @@ DE_list$sig <-  DE_list$padj<0.05
 
 head(DE_list)
 
-ggplot(DE_list, aes(x=log2FoldChange, y=-log10(pvalue), col=as.factor(sig)))+geom_point()
+ggplot(DE_list, aes(x=log2FoldChange, y=-log10(padj), col=as.factor(sig)))+geom_point()
 
 
 
@@ -238,14 +208,9 @@ heatmap.2(mymatrix,Colv=F,col=my_palette,trace='none', labRow=NA, margins = c(10
 
 
 rpm <- 1000000*t(t(data)/colSums(data))
-colSums(rpm)
+#skip log transform
 
-#log normalization
-
-#rpm <- log(1+rpm) #We skip this step
-
-
-
+#
 ids <- row.names(rpm) %in% row.names(dataout)
 
 rpmDE <- rpm[ids,]
@@ -272,7 +237,7 @@ heatmap.2(mymatrix,Colv=F,col=my_palette,trace='none', labRow=NA, margins = c(10
           scale="row")
 
 
-#upload the list of DE genes to metascape.org
+#upload the list of DE genes to metascape
 
 
 #Find all upregulated genes in G0. That is, compare G0 with all the other conditions.
